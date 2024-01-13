@@ -40,7 +40,7 @@ setInterval(() => {
     id: Date.now().toString(),
     clientId: `Client_${serverPort}`,
     direction: Math.random() > 0.5 ? 'buy' : 'sell',
-    quantity: Math.floor(Math.random() * 100),
+    quantity: Math.ceil(Math.random() * 100),
     price: +(Math.random() * 10).toFixed(2)
   };
 
