@@ -2,19 +2,58 @@
 
 const { PeerRPCClient } = require('grenache-nodejs-http')
 const Link = require('grenache-nodejs-link')
+const Orderbook = require('./models/orderbook');
+const Client = require('./utils/create-network-client');
+const Server = require('./utils/create-network-server');
+const config = require('./config/config');
 
-const link = new Link({
-  grape: 'http://127.0.0.1:30001'
-})
-link.start();
+const serverPort = config.randomPort();
+console.log('port', serverPort);
+const clientOrderbook = new Orderbook();
+const client = new Client(config.grape);
+const server = new Server(config.grape, serverPort);
 
-const peer = new PeerRPCClient(link, {})
-peer.init();
+setInterval(function () {
+  server.link.announce('client:orderbook:set', server.service.port, {});
+}, 1000);
 
-peer.request('rpc_test', { msg: 'hello' }, { timeout: 10000 }, (err, data) => {
-  if (err) {
-    console.error(err);
-    process.exit(-1);
-  }
-  console.log(data);
+server.service.on('request', (rid, key, payload, handler) => {
+  console.log('client:client:orderbook:set ', payload);
+
+  server.getAsync(payload).then((data) => {
+    console.log('client:client:orderbook:set orderbook retrieved', data);
+
+    const updatedBook = JSON.parse(data.v);
+
+    clientOrderbook.setBook(updatedBook);
+
+    handler.reply(null, 'ok');
+  }).catch((err) => {
+    console.error(`client:client:orderbook:set fetch orderbook error`, err);
+
+    handler.reply(err);
+  });
 });
+
+setTimeout(() => {
+  const newOrder = {
+    id: Date.now().toString(),
+    clientId: `Client_${serverPort}`,
+    direction: Math.random() > 0.5 ? 'buy' : 'sell',
+    quantity: Math.floor(Math.random() * 100),
+    price: +(Math.random() * 10).toFixed(2)
+  };
+
+  clientOrderbook.addOrder(newOrder);
+
+  client.peer.request('orderbook:order:create', newOrder, { timeout: 10000 }, (err, data) => {
+    if (err) {
+      console.error(`orderbook:order:create client error: ${JSON.stringify(err)}`);
+      console.error(err);
+
+      return;
+    }
+
+    console.log(`client order created: ${JSON.stringify(data)}`);
+  });
+}, 2000)
