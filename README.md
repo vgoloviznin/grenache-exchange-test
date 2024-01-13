@@ -23,6 +23,7 @@ In order to run this engine you need to:
 
 ## Faced issues
 
+- Looks like there's a limitation for amount of data that can be stored in the network - 1000 bytes (https://www.npmjs.com/package/bittorrent-dht#dhtputopts-callback) and I don't see how to go around it without creating some logic of splitting the stringified orderbook into chunks. Although the `history` is not needed in the orderbook, it can be possible that it will still grow and exceed this limitation.
+- If there was an error during `link.put` operation, it's not returned in the error callback, but instead is returned as a value from the function. The messsage that I get is `key v must be less than 1000 bytes in put()`. I've tried increasing the request payload size with `--check_maxPayloadSize` option for grape, but it didn't do anything
 - although there's a `stopAnnouncing` function on the Link, but it works for the local link and I couldn't find a way to remove the node from the network, so that when a client is stopped, processor will not send data to it without getting an error, seems like it's only prossible to configure when launching grape node.
 - I couldn't find an async API for peer\link, so I've promisified some methods manually. I've tried using `promisify` from `util` library, but with no success and decided to not spend much time debugging this issue.
-- If there was an error during `link.put` operation, it's not returedn in the error, but instead is returned as a value from the function. The messsage that I get is `key v must be less than 1000 bytes in put()`. I've tried increasing the request payload size with `--check_maxPayloadSize` option for grape, but it didn't do anything
