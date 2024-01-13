@@ -19,7 +19,7 @@ setInterval(function () {
 
 server.service.on('request', (rid, key, payload, handler) => {
   server.getAsync(payload).then((data) => {
-    console.log('client:client:orderbook:set orderbook retrieved', data);
+    // console.log('client:client:orderbook:set orderbook retrieved', data);
 
     if (data) {
       const updatedBook = JSON.parse(data.v);
@@ -52,7 +52,5 @@ setInterval(() => {
 
       return;
     }
-
-    console.log(`client order created: ${JSON.stringify(data)}`);
   });
 }, 2000)

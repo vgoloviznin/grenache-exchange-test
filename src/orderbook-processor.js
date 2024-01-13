@@ -18,8 +18,6 @@ setInterval(function () {
 }, 1000);
 
 server.service.on('request', (rid, key, newOrder, handler) => {
-  console.log('server:orderbook:order:create', newOrder);
-
   queue.push(newOrder);
 
   handler.reply(null, 'ok');
@@ -32,6 +30,8 @@ async function processQueue() {
     serverBook.addOrder(item);
 
     const serialized = serverBook.getSerialized();
+
+    console.log('book', serialized);
 
     const key = await server.putAsync({ v: serialized });
 
