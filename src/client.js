@@ -35,7 +35,7 @@ server.service.on('request', (rid, key, payload, handler) => {
   });
 });
 
-setTimeout(() => {
+setInterval(() => {
   const newOrder = {
     id: Date.now().toString(),
     clientId: `Client_${serverPort}`,

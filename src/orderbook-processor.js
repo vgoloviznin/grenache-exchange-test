@@ -18,7 +18,7 @@ setInterval(function () {
 }, 1000);
 
 server.service.on('request', (rid, key, newOrder, handler) => {
-  console.log('server:orderbook:order:create ', rid, key, newOrder);
+  console.log('server:orderbook:order:create', newOrder);
 
   queue.push(newOrder);
 
