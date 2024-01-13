@@ -19,15 +19,13 @@ setInterval(function () {
 
 server.service.on('request', (rid, key, payload, handler) => {
   server.getAsync(payload).then((data) => {
-    // console.log('client:client:orderbook:set orderbook retrieved', data);
-
     if (data) {
       const updatedBook = JSON.parse(data.v);
 
       clientOrderbook.setBook(updatedBook);
-
-      handler.reply(null, 'ok');
     }
+
+    handler.reply(null, 'ok');
   }).catch((err) => {
     console.error(`client:client:orderbook:set fetch orderbook error`, err);
 
@@ -49,8 +47,6 @@ setInterval(() => {
   client.peer.request('orderbook:order:create', newOrder, { timeout: 10000 }, (err, data) => {
     if (err) {
       console.error(`orderbook:order:create client error`, err);
-
-      return;
     }
   });
 }, 2000)

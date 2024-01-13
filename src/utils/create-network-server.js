@@ -18,10 +18,6 @@ module.exports = class Server {
 
     this.service = this.peer.transport('server');
     this.service.listen(port);
-
-    // this.putAsync = promisify(this.link.put);
-    // this.putAsync = new Promise((err, res) => {})
-    // this.getAsync = promisify(this.link.get);
   }
 
   putAsync(args) {

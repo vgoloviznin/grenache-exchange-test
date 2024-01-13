@@ -11,8 +11,6 @@ module.exports = class Client {
 
     this.peer = new PeerRPCClient(this.link, {})
     this.peer.init();
-
-    // this.mapAsync = promisify(this.peer.map);
   }
 
   mapAsync(...args) {
@@ -23,7 +21,7 @@ module.exports = class Client {
         }
 
         return res(data);
-      })
+      });
     });
   }
 }

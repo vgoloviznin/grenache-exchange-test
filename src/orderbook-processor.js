@@ -25,17 +25,28 @@ server.service.on('request', (rid, key, newOrder, handler) => {
 
 async function processQueue() {
   if (queue.length > 0) {
-    const item = queue.shift();
+    try {
+      const item = queue.shift();
 
-    serverBook.addOrder(item);
+      serverBook.addOrder(item);
 
-    const serialized = serverBook.getSerialized();
+      const serialized = serverBook.getSerialized();
 
-    console.log('book', serialized);
+      console.log('book', serialized);
 
-    const key = await server.putAsync({ v: serialized });
+      const key = await server.putAsync({ v: serialized });
 
-    await client.mapAsync('client:orderbook:set', key, { timeout: 10000 });
+      console.log('get key', key);
+
+      const val = await server.getAsync(key);
+
+      console.log('val', val);
+
+      console.log('send to clients');
+      await client.mapAsync('client:orderbook:set', key, { timeout: 10000 });
+    } catch (e) {
+      console.error('processQueue error', e);
+    }
   }
 
   initQueueProcessing();
@@ -43,9 +54,7 @@ async function processQueue() {
 
 function initQueueProcessing() {
   setTimeout(() => {
-    processQueue().catch((err) => {
-      console.error(`Queue error`, err);
-    });
+    processQueue();
   }, 1000)
 }
 

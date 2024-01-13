@@ -6,7 +6,7 @@
   "scripts": {
     "start:client": "node src/client",
     "start:processor": "node src/orderbook-processor",
-    "test": "./node_modules/.bin/jest"
+    "test": "jest"
   },
   "author": "Vsevolod Goloviznin",
   "license": "SEE LICENSE IN LICENSE",
