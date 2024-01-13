@@ -18,16 +18,16 @@ setInterval(function () {
 }, 1000);
 
 server.service.on('request', (rid, key, payload, handler) => {
-  console.log('client:client:orderbook:set ', payload);
-
   server.getAsync(payload).then((data) => {
     console.log('client:client:orderbook:set orderbook retrieved', data);
 
-    const updatedBook = JSON.parse(data.v);
+    if (data) {
+      const updatedBook = JSON.parse(data.v);
 
-    clientOrderbook.setBook(updatedBook);
+      clientOrderbook.setBook(updatedBook);
 
-    handler.reply(null, 'ok');
+      handler.reply(null, 'ok');
+    }
   }).catch((err) => {
     console.error(`client:client:orderbook:set fetch orderbook error`, err);
 
@@ -48,8 +48,7 @@ setInterval(() => {
 
   client.peer.request('orderbook:order:create', newOrder, { timeout: 10000 }, (err, data) => {
     if (err) {
-      console.error(`orderbook:order:create client error: ${JSON.stringify(err)}`);
-      console.error(err);
+      console.error(`orderbook:order:create client error`, err);
 
       return;
     }
