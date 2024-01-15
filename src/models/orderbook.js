@@ -5,6 +5,14 @@ module.exports = class Orderbook {
     history: []
   };
 
+  getLatestOrderHash() {
+    if (this.book.history.length === 0) {
+      return '';
+    }
+
+    return this.book.history[this.book.history.length - 1].previousHash;
+  }
+
   addSellOrder(order) {
     this.book.sell.push(order);
 
@@ -56,11 +64,13 @@ module.exports = class Orderbook {
   
   addOrder(newOrder) {
     this.book.history.push(newOrder);
+    
+    const { data } = newOrder;
 
-    if (newOrder.direction === 'buy') {
-      const sellOrders = this.book.sell.filter((f) => f.price <= newOrder.price);
+    if (data.direction === 'buy') {
+      const sellOrders = this.book.sell.filter((f) => f.price <= data.price);
 
-      const { toClose, updatedOrder } = this.matchOrder(sellOrders, newOrder);
+      const { toClose, updatedOrder } = this.matchOrder(sellOrders, data);
 
       if (toClose.length > 0) {
         this.book.sell = this.book.sell.filter((f) => !toClose.includes(f.id));
@@ -70,9 +80,9 @@ module.exports = class Orderbook {
         this.addBuyOrder(updatedOrder);
       }
     } else {
-      const buyOrders = this.book.buy.filter((f) => f.price >= newOrder.price);
+      const buyOrders = this.book.buy.filter((f) => f.price >= data.price);
 
-      const { toClose, updatedOrder } = this.matchOrder(buyOrders, newOrder);
+      const { toClose, updatedOrder } = this.matchOrder(buyOrders, data);
 
       if (toClose.length > 0) {
         this.book.buy = this.book.buy.filter((f) => !toClose.includes(f.id));
@@ -86,9 +96,5 @@ module.exports = class Orderbook {
 
   setBook(newBook) {
     this.book = newBook;
-  }
-
-  getSerialized() {
-    return JSON.stringify(this.book);
   }
 }

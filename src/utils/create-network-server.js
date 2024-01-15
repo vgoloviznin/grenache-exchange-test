@@ -19,28 +19,4 @@ module.exports = class Server {
     this.service = this.peer.transport('server');
     this.service.listen(port);
   }
-
-  putAsync(args) {
-    return new Promise((res, rej) => {
-      this.link.put(args, (err, data) => {
-        if (err) {
-          return rej(err);
-        }
-
-        return res(data);
-      });
-    });
-  }
-
-  getAsync(args) {
-    return new Promise((res, rej) => {
-      this.link.get(args, (err, data) => {
-        if (err) {
-          return rej(err);
-        }
-
-        return res(data);
-      });
-    });
-  }
 }

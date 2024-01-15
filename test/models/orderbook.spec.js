@@ -1,4 +1,5 @@
 const Orderbook = require('../../src/models/orderbook');
+const Order = require('../../src/models/order');
 
 describe('Orderbook test', () => {
   let book;
@@ -9,39 +10,40 @@ describe('Orderbook test', () => {
 
   describe('addOrder test', () => {
     it('adds order to empty book', () => {
-      const newOrder = {
+      const newOrder = new Order('', {
         id: Date.now().toString(),
         clientId: '1',
         direction: 'buy',
         quantity: 1,
         price: 1
-      };
+      });
 
       book.addOrder(newOrder);
 
       expect(book.book).toStrictEqual({
         sell: [],
-        buy: [newOrder],
+        buy: [newOrder.data],
         history: [newOrder]
       });
     });
 
     it('partially matches sell order', () => {
-      const newOrder = {
-        id: Date.now().toString(),
-        clientId: '1',
-        direction: 'sell',
-        quantity: 1,
-        price: 1
-      };
-      const existingOrder = {
+      const existingOrder = new Order('', {
         id: '1',
         clientId: '1',
         direction: 'buy',
         quantity: 2,
         price: 2
-      };
+      });
 
+      const newOrder = new Order(existingOrder.hash, {
+        id: Date.now().toString(),
+        clientId: '1',
+        direction: 'sell',
+        quantity: 1,
+        price: 1
+      });
+      
       book.addOrder(existingOrder);
       book.addOrder(newOrder);
 
