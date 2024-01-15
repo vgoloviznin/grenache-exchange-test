@@ -19,10 +19,12 @@ server.link.startAnnouncing('client', server.service.port, {});
 
 server.service.on('request', (rid, key, payload, handler) => {
   const { type } = payload;
+
   if (type === MESSAGE_TYPES.INIT) {
     return handler.reply(null, { book: clientOrderbook.book });
   } else if (type === MESSAGE_TYPES.NEW_ORDER) {
     const { order } = payload;
+    
     if (order.previousHash !== clientOrderbook.getLatestOrderHash()) {
       return handler.reply(null, 'error');
     }

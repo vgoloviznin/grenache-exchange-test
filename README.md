@@ -14,7 +14,7 @@ In order to run this engine you need to:
 
 ## Considerations
 
-- It looks like Grenache framework `map` function executes client requests in the correct order, however I've added a simple blockchain mechanism to ensure the order of orders is correct.
+- It looks like Grenache framework `map` function executes client requests in the correct order, but I couldn't find documentation to suuport this idea (although may be DHT does it out of the box). I've added a simple blockchain mechanism to ensure the order of orders is correct when multiple clients are creating orders at the same time.
 - Orderbook model doesn't contain any currencies for simplicity and doesn't match orders with clients - so ne client can close his own orders. In a real-world scenario, there should be a check for clients (or may be even not allowing to create new orders while current one is not closed for a client). Currencies can be handled in various ways, by storing all currencies altogether or creating separate orderbook per currency.
 - I've used orderd arrays for storing buy and sell orders and filtering to find matching orders, which might not provide great performance for real-world scenarios. A tree-like structure might be more suitable for storing orders.
 - More unit tests can be added to validate correct order matching and orderbook functionality. e2e tests can be added to validate distributed processing and client orderbook update mechanism.
